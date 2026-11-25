@@ -1,13 +1,13 @@
-package com.barbearia.byg;
+package br.com.byg.barbearia;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BygApplication {
+public class BarbeariaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BygApplication.class, args);
+		SpringApplication.run(BarbeariaApplication.class, args);
 	}
 
 }
