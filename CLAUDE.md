@@ -16,10 +16,10 @@ Projeto de cliente real e também de portfólio: priorize código limpo, testado
 
 Um único projeto Spring (um `pom.xml`, um `.jar`). **Não** usar microsserviços.
 
-Módulos = pacotes de primeiro nível em `com.seuapp`:
+Módulos = pacotes de primeiro nível em `br.com.byg.barbearia`:
 
 ```
-com.seuapp
+br.com.byg.barbearia
 ├── agendamento   serviços, horários, regra de conflito
 ├── cliente
 ├── barbeiro

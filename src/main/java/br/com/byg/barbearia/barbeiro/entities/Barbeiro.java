@@ -1,4 +1,4 @@
-package com.barbearia.byg.barbeiro.entities;
+package br.com.byg.barbearia.barbeiro.entities;
 
 import jakarta.persistence.Entity;
 
