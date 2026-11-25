@@ -12,6 +12,17 @@ Projeto de cliente real e também de portfólio: priorize código limpo, testado
 - **Infra:** uma VPS (Hostinger KVM 1, 4 GB RAM) com Docker Compose: app Spring + PostgreSQL + Caddy (HTTPS automático)
 - Imagem final do app: `eclipse-temurin:25-jre`
 
+## Estrutura do repositório
+
+```
+byg/
+├── backend/    projeto Spring Boot (pom.xml, mvnw, src/); comandos Maven rodam aqui
+├── frontend/   projeto Angular
+└── infra/      docker-compose.yml, Caddyfile, .env.example
+```
+
+`frontend/` e `infra/` são criados quando houver conteúdo. O `.gitignore` da raiz cobre segredos e IDE; cada projeto tem o seu para artefatos de build.
+
 ## Arquitetura: monolito modular
 
 Um único projeto Spring (um `pom.xml`, um `.jar`). **Não** usar microsserviços.
@@ -86,4 +97,6 @@ Design de referência: tela de login (desktop + mobile) feita no canvas do Claud
 
 - Código e nomes de domínio em **português** (Agendamento, Cliente, Barbeiro).
 - Testes para regras de negócio (principalmente conflito de horário) e para os módulos.
-- Segredos só em variáveis de ambiente; nunca commitar `.env`.
+- Segredos só em variáveis de ambiente; nunca commitar `.env`. O repositório é público.
+- Git: neste projeto os commits vão direto na `main` (exceção à regra de branch de feature). Cada mudança continua sendo commitada e enviada antes da próxima.
+- Sem stack de observabilidade (Micrometer, Prometheus, tracing): o projeto será entregue a terceiros.
