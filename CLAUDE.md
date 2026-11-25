@@ -100,3 +100,10 @@ Design de referência: tela de login (desktop + mobile) feita no canvas do Claud
 - Segredos só em variáveis de ambiente; nunca commitar `.env`. O repositório é público.
 - Git: neste projeto os commits vão direto na `main` (exceção à regra de branch de feature). Cada mudança continua sendo commitada e enviada antes da próxima.
 - Sem stack de observabilidade (Micrometer, Prometheus, tracing): o projeto será entregue a terceiros.
+
+## Pendências
+
+- [ ] Adicionar MapStruct para conversão DTO ↔ entidade: `annotationProcessorPaths` na ordem `lombok` → `lombok-mapstruct-binding` → `mapstruct-processor`; mappers com `componentModel = "spring"` e `unmappedTargetPolicy = ERROR`, no `internal/` de cada módulo; campos controlados pelo servidor (`id`, `status`) com `ignore = true`.
+- [ ] Trocar Spring Modulith `2.2.0-M1` (milestone) pela última versão GA compatível com o Boot 4.2.
+- [ ] Mover `barbeiro/entities/Barbeiro` para `barbeiro/internal/`.
+- [ ] Definir a licença do repositório e adicioná-la ao README.
