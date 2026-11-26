@@ -25,6 +25,8 @@
               }
             ],
             "styles": [
+              "@fontsource-variable/inter/wght.css",
+              "@fontsource-variable/oswald/wght.css",
               "src/styles.css"
             ]
           },
