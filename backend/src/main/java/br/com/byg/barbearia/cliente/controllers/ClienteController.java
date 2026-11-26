@@ -3,6 +3,7 @@ package br.com.byg.barbearia.cliente.controllers;
 import br.com.byg.barbearia.cliente.dto.request.ClienteRequestDTO;
 import br.com.byg.barbearia.cliente.dto.response.ClienteResponseDTO;
 import br.com.byg.barbearia.cliente.services.ClienteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class ClienteController {
     private final ClienteService clienteService;
 
     @PostMapping
-    public ResponseEntity<ClienteResponseDTO> cadastrarCliente(@RequestBody ClienteRequestDTO clienteRequestDTO) {
+    public ResponseEntity<ClienteResponseDTO> cadastrarCliente(@Valid @RequestBody ClienteRequestDTO clienteRequestDTO) {
         ClienteResponseDTO clienteResponseDTO = clienteService.cadastrarCliente(clienteRequestDTO);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -31,4 +32,5 @@ public class ClienteController {
 
         return ResponseEntity.created(location).body(clienteResponseDTO);
     }
+
 }
