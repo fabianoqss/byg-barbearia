@@ -1,0 +1,261 @@
+<header class="border-b border-divider bg-bg">
+  <div
+    class="mx-auto flex max-w-280 flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-4 sm:px-6"
+  >
+    <a
+      routerLink="/"
+      fragment="topo"
+      class="flex items-center gap-3 font-display text-xl font-semibold tracking-[0.08em] text-neutral-100 uppercase no-underline focus-visible:outline-2 focus-visible:outline-offset-2"
+    >
+      <img
+        src="images/logo-byg.webp"
+        alt=""
+        width="44"
+        height="44"
+        class="size-11 rounded-full object-contain"
+      />
+      {{ barbearia.nome }}
+    </a>
+    <nav
+      aria-label="Navegação principal"
+      class="flex w-full flex-wrap items-center justify-between gap-x-2 gap-y-1 text-sm sm:w-auto sm:justify-start sm:gap-6 sm:text-[15px]"
+    >
+      <a
+        routerLink="/"
+        fragment="servicos"
+        class="inline-flex min-h-11 min-w-11 items-center justify-center text-neutral-300 no-underline hover:text-white"
+        >Serviços</a
+      >
+      <a
+        routerLink="/"
+        fragment="equipe"
+        class="inline-flex min-h-11 min-w-11 items-center justify-center text-neutral-300 no-underline hover:text-white"
+        >Equipe</a
+      >
+      <a
+        routerLink="/"
+        fragment="contato"
+        class="inline-flex min-h-11 min-w-11 items-center justify-center text-neutral-300 no-underline hover:text-white"
+        >Contato</a
+      >
+      <a
+        routerLink="/login"
+        class="inline-flex min-h-11 min-w-11 items-center justify-center text-neutral-300 no-underline hover:text-white"
+        >Entrar</a
+      >
+      <a
+        routerLink="/agendar"
+        class="inline-flex h-11 items-center rounded-field bg-primary px-3 font-display font-semibold tracking-[0.1em] text-primary-foreground uppercase no-underline hover:bg-white hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300 sm:px-5"
+        >Agendar</a
+      >
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section
+    id="topo"
+    tabindex="-1"
+    aria-labelledby="titulo-inicio"
+    class="border-b border-divider bg-panel"
+  >
+    <div
+      class="mx-auto flex max-w-280 flex-wrap items-center justify-center gap-8 px-6 py-12 lg:gap-12 lg:py-18"
+    >
+      <div class="flex min-w-0 flex-[1_1_460px] flex-col gap-6">
+        <p class="flex items-center gap-2.5 text-[13px] tracking-[0.18em] text-muted uppercase">
+          <span class="h-px w-7 bg-neutral-600" aria-hidden="true"></span>
+          {{ barbearia.bairroCidade }}
+        </p>
+        <h1
+          id="titulo-inicio"
+          class="font-display text-[40px] leading-[1.02] font-semibold tracking-[0.02em] text-neutral-100 uppercase lg:text-[64px]"
+        >
+          Seu estilo<br />começa aqui.
+        </h1>
+        <p class="max-w-120 text-[17px] leading-[1.6] text-muted">
+          Fundada por três barbeiros, a BYG une atendimento personalizado, técnicas modernas e um
+          ambiente confortável.
+        </p>
+        <div class="flex flex-wrap items-center gap-5">
+          <a
+            routerLink="/agendar"
+            class="inline-flex h-13 items-center rounded-field bg-primary px-7 font-display text-[17px] font-semibold tracking-[0.12em] text-primary-foreground uppercase no-underline hover:bg-white hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300"
+            >Agendar horário</a
+          >
+          <p class="flex items-center gap-2 text-[15px] text-neutral-300">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="text-primary"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.5L12 17.3l-5.9 3.2 1.3-6.5-4.9-4.6 6.6-.8z"
+              />
+            </svg>
+            <span
+              ><strong class="text-neutral-100">{{ barbearia.avaliacao.nota }}</strong> ·
+              {{ barbearia.avaliacao.total }} avaliações</span
+            >
+          </p>
+        </div>
+      </div>
+      <img
+        src="images/logo-byg.webp"
+        alt="Logo {{ barbearia.nome }}"
+        width="340"
+        height="340"
+        fetchpriority="high"
+        class="aspect-square h-auto w-full max-w-60 flex-[0_1_340px] rounded-full object-contain sm:max-w-85"
+      />
+    </div>
+  </section>
+
+  <section
+    id="servicos"
+    tabindex="-1"
+    aria-labelledby="titulo-servicos"
+    class="mx-auto flex max-w-280 flex-col gap-8 px-6 pt-12 pb-8 lg:pt-20 lg:pb-10"
+  >
+    <h2
+      id="titulo-servicos"
+      class="font-display text-[32px] font-semibold tracking-[0.04em] text-neutral-100 uppercase lg:text-[40px]"
+    >
+      Serviços
+    </h2>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-4">
+      @for (servico of servicos; track servico.id) {
+        <article
+          class="flex items-center justify-between gap-4 rounded-xl border border-neutral-800 bg-[#141414] px-5.5 py-5"
+        >
+          <div class="flex min-w-0 flex-col gap-1.5">
+            <h3 class="text-[17px] font-semibold text-neutral-100">{{ servico.nome }}</h3>
+            <p class="text-sm text-muted">
+              {{ servico.duracaoMinutos | duracao }} ·
+              {{ servico.preco | currency: undefined : 'symbol' : '1.0-2' }}
+            </p>
+          </div>
+          <a
+            routerLink="/agendar"
+            [queryParams]="{ servico: servico.id }"
+            [attr.aria-label]="'Agendar ' + servico.nome"
+            class="inline-flex h-11 shrink-0 items-center rounded-field border border-[#3F3F3F] px-4 text-sm font-medium text-text no-underline hover:border-muted hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2"
+            >Agendar</a
+          >
+        </article>
+      }
+    </div>
+  </section>
+
+  <section
+    id="equipe"
+    tabindex="-1"
+    aria-labelledby="titulo-equipe"
+    class="mx-auto flex max-w-280 flex-col gap-8 px-6 py-8 lg:py-10"
+  >
+    <h2
+      id="titulo-equipe"
+      class="font-display text-[32px] font-semibold tracking-[0.04em] text-neutral-100 uppercase lg:text-[40px]"
+    >
+      Nossa equipe
+    </h2>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,240px),1fr))] gap-4">
+      @for (barbeiro of barbeiros; track barbeiro.id) {
+        <article
+          class="flex items-center gap-4 rounded-xl border border-neutral-800 bg-[#141414] p-5"
+        >
+          <span
+            class="flex size-14 shrink-0 items-center justify-center rounded-full border border-[#3F3F3F] bg-neutral-800 font-display text-xl text-neutral-300"
+            aria-hidden="true"
+            >{{ barbeiro.iniciais }}</span
+          >
+          <div class="flex flex-col gap-1">
+            <h3 class="font-semibold text-neutral-100">{{ barbeiro.nome }}</h3>
+            <p class="text-sm text-muted">Barbeiro · sócio-fundador</p>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section
+    id="contato"
+    tabindex="-1"
+    aria-labelledby="titulo-contato"
+    class="mx-auto max-w-280 px-6 pt-8 pb-12 lg:pt-10 lg:pb-20"
+  >
+    <h2 id="titulo-contato" class="sr-only">Contato</h2>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-4">
+      <div class="flex flex-col gap-4 rounded-xl border border-neutral-800 bg-[#141414] p-7">
+        <h3 class="font-display text-[22px] font-semibold tracking-[0.06em] uppercase">
+          Onde estamos
+        </h3>
+        <address class="flex flex-col text-[15px] leading-[1.6] text-neutral-300 not-italic">
+          @for (linha of barbearia.enderecoLinhas; track linha) {
+            <span>{{ linha }}</span>
+          }
+        </address>
+        <a
+          [href]="barbearia.mapaUrl"
+          class="inline-flex min-h-11 w-fit items-center text-sm font-semibold"
+          >Ver no mapa</a
+        >
+        <a
+          [href]="barbearia.whatsApp.url"
+          class="flex min-h-12 items-center justify-center rounded-field border border-[#3F3F3F] px-2 text-center text-[15px] font-medium text-neutral-200 no-underline hover:border-muted hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2"
+          >WhatsApp {{ barbearia.whatsApp.telefone }}</a
+        >
+      </div>
+
+      <div class="flex flex-col gap-4 rounded-xl border border-neutral-800 bg-[#141414] p-7">
+        <h3
+          id="titulo-horarios"
+          class="font-display text-[22px] font-semibold tracking-[0.06em] uppercase"
+        >
+          Horários
+        </h3>
+        <table aria-labelledby="titulo-horarios" class="w-full text-[15px]">
+          <tbody class="divide-y divide-divider">
+            @for (horario of barbearia.horarios; track horario.rotulo) {
+              <tr>
+                <th scope="row" class="py-3 pr-2 text-left font-normal text-muted">
+                  {{ horario.rotulo }}
+                </th>
+                <td class="py-3 text-right whitespace-nowrap">
+                  @if (horario.expediente; as expediente) {
+                    {{ expediente.inicio }} – {{ expediente.fim }}
+                  } @else {
+                    <span class="text-muted">Fechado</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex flex-col gap-4 rounded-xl border border-neutral-800 bg-[#141414] p-7">
+        <h3 class="font-display text-[22px] font-semibold tracking-[0.06em] uppercase">
+          Comodidades
+        </h3>
+        <ul class="flex flex-wrap gap-2">
+          @for (comodidade of barbearia.comodidades; track comodidade) {
+            <li class="rounded-full border border-border px-3 py-2 text-[13px] text-neutral-300">
+              {{ comodidade }}
+            </li>
+          }
+        </ul>
+        <p class="text-sm leading-[1.6] text-muted">
+          Pagamento: PIX, dinheiro, cartões de crédito e débito e transferência.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-divider">
+  <div class="mx-auto max-w-280 px-6 py-7 text-sm text-muted">© {{ barbearia.nome }}</div>
+</footer>
