@@ -1,11 +1,12 @@
 package br.com.byg.barbearia.barbeiro.services;
 
 import br.com.byg.barbearia.barbeiro.dto.request.BarbeiroRequestDTO;
+import br.com.byg.barbearia.barbeiro.dto.response.BarbeiroResponseDTO;
 import br.com.byg.barbearia.barbeiro.entities.Barbeiro;
 import br.com.byg.barbearia.barbeiro.repositories.BarbeiroRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +16,7 @@ public class BarbeiroService {
     private final BarbeiroRepository barbeiroRepository;
 
     @Transactional
-    public BarbeiroRequestDTO cadastrarBarbeiro(BarbeiroRequestDTO barbeiroRequestDTO){
+    public BarbeiroResponseDTO cadastrarBarbeiro(BarbeiroRequestDTO barbeiroRequestDTO){
         Barbeiro barbeiro = new Barbeiro();
 
         dtoToEntity(barbeiro, barbeiroRequestDTO);
@@ -27,7 +28,6 @@ public class BarbeiroService {
 
 
     private void dtoToEntity(Barbeiro barbeiro, BarbeiroRequestDTO barbeiroRequestDTO){
-
         barbeiro.setEmail(barbeiroRequestDTO.email());
         barbeiro.setTelefone(barbeiroRequestDTO.telefone());
         barbeiro.setNome(barbeiroRequestDTO.nome());
