@@ -1,0 +1,188 @@
+<div class="flex h-dvh flex-col lg:h-auto lg:min-h-dvh">
+  <header class="sticky top-0 z-10 shrink-0 border-b border-divider bg-bg lg:static">
+    <div class="mx-auto flex max-w-280 items-center gap-2 px-3 py-2 lg:gap-4 lg:px-6 lg:py-5">
+      <a
+        routerLink="/"
+        aria-label="Voltar"
+        class="flex size-11 shrink-0 items-center justify-center rounded-field text-neutral-300 no-underline hover:bg-surface hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300 lg:border lg:border-border"
+      >
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+      </a>
+      <h1 class="font-display text-xl font-semibold tracking-[0.08em] uppercase lg:text-[32px]">
+        Agendar horário
+      </h1>
+    </div>
+  </header>
+
+  <main
+    class="mx-auto grid min-h-0 w-full max-w-280 flex-1 grid-rows-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_340px] lg:grid-rows-none lg:gap-8 lg:px-6 lg:py-10"
+  >
+    <div
+      class="flex min-h-0 flex-col gap-6 overflow-y-auto px-5 pt-5 pb-6 max-[359px]:px-3 lg:gap-8 lg:overflow-visible lg:p-0"
+    >
+      <section id="servico" aria-labelledby="titulo-servico" class="flex flex-col gap-2.5">
+        <h2
+          id="titulo-servico"
+          class="text-[13px] font-semibold tracking-[0.16em] text-muted uppercase"
+        >
+          1 · Serviço
+        </h2>
+        <div class="grid gap-2.5 lg:grid-cols-3">
+          @for (servico of servicos; track servico.id) {
+            <button
+              type="button"
+              [attr.aria-pressed]="servicoSelecionado().id === servico.id"
+              (click)="servicoSelecionado.set(servico)"
+              class="flex min-h-15 w-full cursor-pointer items-center justify-between gap-3 rounded-field border border-[#2A2A2A] bg-[#141414] px-4 py-2.5 text-left text-text hover:border-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300 aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground lg:min-h-26 lg:flex-col lg:items-start lg:py-3.5"
+            >
+              <span class="flex min-w-0 flex-col gap-0.5">
+                <span class="text-[15px] font-semibold">{{ servico.nome }}</span>
+                <span class="text-[13px] opacity-75">{{ servico.duracaoMinutos | duracao }}</span>
+              </span>
+              <span class="shrink-0 text-sm font-semibold">{{
+                servico.preco | currency: undefined : 'symbol' : '1.0-2'
+              }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <section id="barbeiro" aria-labelledby="titulo-barbeiro" class="flex flex-col gap-2.5">
+        <h2
+          id="titulo-barbeiro"
+          class="text-[13px] font-semibold tracking-[0.16em] text-muted uppercase"
+        >
+          2 · Barbeiro
+        </h2>
+        <div class="grid grid-cols-4 gap-2.5">
+          @for (barbeiro of barbeiros; track barbeiro.id) {
+            <button
+              type="button"
+              [attr.aria-pressed]="barbeiroSelecionado().id === barbeiro.id"
+              (click)="barbeiroSelecionado.set(barbeiro)"
+              class="flex min-h-11 min-w-0 cursor-pointer flex-col items-center gap-1.5 rounded-field border border-[#2A2A2A] bg-[#141414] px-1 py-2.5 text-xs text-text hover:border-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300 aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground lg:px-2 lg:py-3"
+            >
+              <span
+                aria-hidden="true"
+                class="flex size-10 shrink-0 items-center justify-center rounded-full border border-[#3F3F3F] bg-neutral-800 font-display text-sm text-neutral-300"
+                >{{ barbeiro.iniciais }}</span
+              >
+              <span>{{ barbeiro.nome }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <section id="dia" aria-labelledby="titulo-dia" class="flex flex-col gap-2.5">
+        <h2
+          id="titulo-dia"
+          class="text-[13px] font-semibold tracking-[0.16em] text-muted uppercase"
+        >
+          3 · Dia
+        </h2>
+        <div class="grid grid-cols-6 gap-2 max-[359px]:gap-1">
+          @for (dia of dias(); track dia.data) {
+            <button
+              type="button"
+              [attr.aria-label]="dia.rotuloCompleto"
+              [attr.aria-pressed]="diaSelecionado()?.data === dia.data"
+              (click)="diaSelecionado.set(dia)"
+              class="flex h-16 min-w-11 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-field border border-[#2A2A2A] bg-[#141414] text-text hover:border-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300 aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground"
+            >
+              <span class="text-[11px] tracking-[0.1em] uppercase opacity-75">{{
+                dia.semana
+              }}</span>
+              <span class="font-display text-xl font-semibold">{{ dia.numero }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <section id="horario" aria-labelledby="titulo-horario" class="flex flex-col gap-2.5">
+        <h2
+          id="titulo-horario"
+          class="text-[13px] font-semibold tracking-[0.16em] text-muted uppercase"
+        >
+          4 · Horário
+        </h2>
+        <div class="grid grid-cols-4 gap-2 lg:grid-cols-6">
+          @for (horario of horarios(); track horario.hora) {
+            <button
+              type="button"
+              [disabled]="horario.ocupado"
+              [attr.aria-label]="horario.ocupado ? horario.hora + ' ocupado' : null"
+              [attr.aria-pressed]="horarioSelecionado() === horario.hora"
+              (click)="horarioSelecionado.set(horario.hora)"
+              class="h-11 cursor-pointer rounded-field border border-[#2A2A2A] bg-[#141414] text-sm font-medium text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300 disabled:cursor-default disabled:border-dashed disabled:bg-transparent disabled:text-neutral-600 disabled:line-through enabled:hover:border-muted aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground"
+            >
+              {{ horario.hora }}
+            </button>
+          } @empty {
+            <p class="col-span-full text-sm text-muted">Nenhum horário disponível neste dia.</p>
+          }
+        </div>
+      </section>
+    </div>
+
+    <aside
+      class="sticky bottom-0 flex flex-col gap-3 border-t border-divider bg-panel px-5 pt-3.5 pb-5 lg:top-6 lg:bottom-auto lg:gap-5 lg:self-start lg:rounded-xl lg:border lg:p-6"
+    >
+      <h2
+        class="sr-only lg:not-sr-only lg:font-display lg:text-[22px] lg:font-semibold lg:tracking-[0.06em] lg:uppercase"
+      >
+        Resumo do agendamento
+      </h2>
+      @let detalhes = resumo();
+      @let preco = detalhes.preco | currency: undefined : 'symbol' : '1.0-2';
+      <div aria-live="polite" aria-atomic="true" class="lg:flex lg:flex-col lg:gap-5">
+        <p class="flex items-baseline justify-between gap-3 text-sm lg:hidden">
+          <span class="text-muted">{{ detalhes.textoCompacto }}</span>
+          <strong class="shrink-0 font-semibold">{{ preco }}</strong>
+        </p>
+        <dl class="hidden flex-col gap-3 text-sm lg:flex">
+          <div class="flex justify-between gap-4">
+            <dt class="text-muted">Serviço</dt>
+            <dd class="text-right font-medium">{{ detalhes.servico }}</dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-muted">Barbeiro</dt>
+            <dd class="text-right font-medium">{{ detalhes.barbeiro }}</dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-muted">Dia</dt>
+            <dd class="text-right font-medium">{{ detalhes.dia }}</dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-muted">Horário</dt>
+            <dd class="text-right font-medium">{{ detalhes.horario }}</dd>
+          </div>
+          <div class="mt-1 flex items-baseline justify-between gap-4 border-t border-divider pt-4">
+            <dt class="text-muted">Preço</dt>
+            <dd class="font-display text-2xl font-semibold">{{ preco }}</dd>
+          </div>
+        </dl>
+      </div>
+      <button
+        id="confirmar-agendamento"
+        type="button"
+        [disabled]="!cta().habilitado"
+        (click)="confirmar()"
+        class="h-12.5 w-full cursor-pointer rounded-field bg-primary px-2 font-display text-[17px] font-semibold tracking-[0.12em] text-primary-foreground uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300 disabled:cursor-default disabled:bg-neutral-800 disabled:text-muted enabled:hover:bg-white"
+      >
+        {{ cta().texto }}
+      </button>
+    </aside>
+  </main>
+</div>

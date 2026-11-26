@@ -8,6 +8,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/inicio/inicio').then((m) => m.Inicio),
   },
   {
+    path: 'agendar',
+    title: 'Agendar horário | BYG Barbearia',
+    loadComponent: () => import('./features/agendamento/agendar/agendar').then((m) => m.Agendar),
+  },
+  {
     path: 'login',
     title: 'Entrar | BYG Barbearia',
     loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
