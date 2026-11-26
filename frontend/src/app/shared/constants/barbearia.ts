@@ -1,6 +1,5 @@
 export const BARBEARIA = {
   nome: 'BYG Barbearia',
-  anoFundacao: '[ANO]',
-  endereco: '[ENDEREÇO DA BARBEARIA]',
-  horarioFuncionamento: 'Seg–Sáb · [HORÁRIO]',
+  endereco: 'R. Joaquim Pires Ferreira, 190, Sala 101 – Estados, João Pessoa – PB, 58030-224',
+  horarioFuncionamento: 'Seg–Sáb · 8h–18h',
 } as const;

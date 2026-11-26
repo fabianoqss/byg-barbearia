@@ -1,13 +1,8 @@
 <div class="flex min-h-dvh">
   <aside
-    class="hidden flex-1 flex-col items-center justify-between gap-10 border-r border-divider bg-panel p-14 lg:flex"
+    class="hidden flex-1 flex-col items-center gap-10 border-r border-divider bg-panel p-14 lg:flex"
   >
-    <p class="flex items-center gap-2.5 self-stretch text-[13px] tracking-[0.18em] text-muted uppercase">
-      <span class="h-px w-7 bg-neutral-600" aria-hidden="true"></span>
-      Desde {{ barbearia.anoFundacao }}
-    </p>
-
-    <div class="flex flex-col items-center gap-8 text-center">
+    <div class="flex flex-1 flex-col items-center justify-center gap-8 text-center">
       <img
         src="images/logo-byg.webp"
         alt="Logo {{ barbearia.nome }}"
@@ -28,7 +23,7 @@
       </div>
     </div>
 
-    <div class="flex flex-wrap justify-between gap-4 self-stretch text-[13px] text-muted">
+    <div class="flex flex-col gap-1 self-stretch text-[13px] text-muted">
       <address class="not-italic">{{ barbearia.endereco }}</address>
       <span>{{ barbearia.horarioFuncionamento }}</span>
     </div>
