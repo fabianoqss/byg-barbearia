@@ -108,6 +108,18 @@
             </button>
           }
         </div>
+        <label for="data-personalizada" class="flex flex-col gap-2 text-sm text-muted">
+          <span>Escolha outra data</span>
+          <input
+            #dataInput
+            id="data-personalizada"
+            type="date"
+            [min]="dataMinima()"
+            [value]="diaSelecionado()?.data ?? ''"
+            (change)="selecionarData(dataInput.value, dataInput)"
+            class="h-12 w-full max-w-72 rounded-field border border-border bg-surface px-3 text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300"
+          />
+        </label>
       </section>
 
       <section id="horario" aria-labelledby="titulo-horario" class="flex flex-col gap-2.5">
@@ -118,19 +130,25 @@
           4 · Horário
         </h2>
         <div class="grid grid-cols-4 gap-2 lg:grid-cols-6">
-          @for (horario of horarios(); track horario.hora) {
-            <button
-              type="button"
-              [disabled]="horario.ocupado"
-              [attr.aria-label]="horario.ocupado ? horario.hora + ' ocupado' : null"
-              [attr.aria-pressed]="horarioSelecionado() === horario.hora"
-              (click)="horarioSelecionado.set(horario.hora)"
-              class="h-11 cursor-pointer rounded-field border border-[#2A2A2A] bg-[#141414] text-sm font-medium text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300 disabled:cursor-default disabled:border-dashed disabled:bg-transparent disabled:text-neutral-600 disabled:line-through enabled:hover:border-muted aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground"
-            >
-              {{ horario.hora }}
-            </button>
-          } @empty {
-            <p class="col-span-full text-sm text-muted">Nenhum horário disponível neste dia.</p>
+          @if (diaSelecionado()?.expediente === null) {
+            <p role="status" class="col-span-full text-sm text-muted">
+              A barbearia não abre aos domingos. Escolha outra data.
+            </p>
+          } @else {
+            @for (horario of horarios(); track horario.hora) {
+              <button
+                type="button"
+                [disabled]="horario.ocupado"
+                [attr.aria-label]="horario.ocupado ? horario.hora + ' ocupado' : null"
+                [attr.aria-pressed]="horarioSelecionado() === horario.hora"
+                (click)="horarioSelecionado.set(horario.hora)"
+                class="h-11 cursor-pointer rounded-field border border-[#2A2A2A] bg-[#141414] text-sm font-medium text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300 disabled:cursor-default disabled:border-dashed disabled:bg-transparent disabled:text-neutral-600 disabled:line-through enabled:hover:border-muted aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground"
+              >
+                {{ horario.hora }}
+              </button>
+            } @empty {
+              <p class="col-span-full text-sm text-muted">Nenhum horário disponível neste dia.</p>
+            }
           }
         </div>
       </section>

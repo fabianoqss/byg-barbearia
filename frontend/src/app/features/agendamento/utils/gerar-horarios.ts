@@ -25,6 +25,10 @@ export function gerarHorarios(
     return [];
   }
 
+  if (!dia.expediente) {
+    return [];
+  }
+
   const abertura = horaEmMinutos(dia.expediente.inicio);
   const fechamento = horaEmMinutos(dia.expediente.fim);
   const intervalos = ocupados.map(({ inicio, fim }) => ({
