@@ -1,4 +1,4 @@
-import { gerarDias } from './gerar-dias';
+import { criarDiaAgendamento, gerarDias } from './gerar-dias';
 import { gerarHorarios } from './gerar-horarios';
 
 describe('gerarHorarios', () => {
@@ -38,5 +38,17 @@ describe('gerarHorarios', () => {
       '09:30',
       '10:00',
     ]);
+  });
+
+  it('gera expediente de dia útil para uma data de outro ano e nenhum horário no domingo', () => {
+    const agora = new Date('2026-11-26T11:00:00Z');
+    const segunda = criarDiaAgendamento('2027-01-04', agora)!;
+    const domingo = criarDiaAgendamento('2026-11-29', agora)!;
+
+    const horarios = gerarHorarios(segunda, 30, agora);
+
+    expect(horarios.at(0)?.hora).toBe('09:00');
+    expect(horarios.at(-1)?.hora).toBe('17:30');
+    expect(gerarHorarios(domingo, 30, agora)).toEqual([]);
   });
 });

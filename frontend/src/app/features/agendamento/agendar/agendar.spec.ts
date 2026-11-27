@@ -33,6 +33,13 @@ describe('Agendar', () => {
     return botao('#confirmar-agendamento');
   }
 
+  async function escolherData(data: string): Promise<void> {
+    const campo = elemento.querySelector<HTMLInputElement>('#data-personalizada')!;
+    campo.value = data;
+    campo.dispatchEvent(new Event('change'));
+    await harness.fixture.whenStable();
+  }
+
   it('mostra os padrões e pede a seleção de um horário', async () => {
     await abrir();
 
@@ -116,5 +123,52 @@ describe('Agendar', () => {
 
     expect(botao('#horario button:first-child').textContent?.trim()).toBe('10:30');
     expect(confirmar().disabled).toBe(true);
+  });
+
+  it('permite selecionar outra data em mês e ano futuros e atualiza resumo e expediente', async () => {
+    await abrir();
+    await escolherData('2027-01-04');
+
+    expect(elemento.querySelector<HTMLInputElement>('#data-personalizada')?.min).toBe('2026-11-26');
+    expect(elemento.querySelector<HTMLInputElement>('#data-personalizada')?.value).toBe(
+      '2027-01-04',
+    );
+    expect(elemento.querySelector('[aria-live="polite"]')?.textContent).toContain(
+      'segunda-feira, 4 de janeiro de 2027',
+    );
+    expect(elemento.querySelector('[aria-live="polite"]')?.textContent).toContain('Seg 04/01/2027');
+    expect(elemento.querySelector('#horario button:first-child')?.textContent?.trim()).toBe(
+      '09:00',
+    );
+  });
+
+  it('ignora uma data passada escolhida manualmente apesar do limite do controle', async () => {
+    await abrir();
+    await escolherData('2027-01-04');
+    await escolherData('2026-11-25');
+
+    expect(elemento.querySelector('[aria-live="polite"]')?.textContent).toContain(
+      'segunda-feira, 4 de janeiro de 2027',
+    );
+  });
+
+  it('mostra domingo fechado sem horários e mantém a confirmação desabilitada', async () => {
+    await abrir();
+    await escolherData('2026-11-29');
+
+    expect(elemento.querySelector('#horario')?.textContent).toContain(
+      'A barbearia não abre aos domingos.',
+    );
+    expect(elemento.querySelectorAll('#horario button')).toHaveLength(0);
+    expect(confirmar().disabled).toBe(true);
+  });
+
+  it('atualiza para o expediente de sábado ao escolher outra data', async () => {
+    await abrir();
+    await escolherData('2026-11-28');
+
+    expect(elemento.querySelector('#horario button:first-child')?.textContent?.trim()).toBe(
+      '08:30',
+    );
   });
 });

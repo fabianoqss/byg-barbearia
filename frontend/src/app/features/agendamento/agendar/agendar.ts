@@ -15,7 +15,8 @@ import { SERVICOS } from '../../../shared/constants/servicos';
 import { Barbeiro } from '../../../shared/models/barbeiro';
 import { Servico } from '../../../shared/models/servico';
 import { Duracao } from '../../../shared/pipes/duracao';
-import { DiaAgendamento, gerarDias } from '../utils/gerar-dias';
+import { dataLocal } from '../utils/data-local';
+import { criarDiaAgendamento, DiaAgendamento, gerarDias } from '../utils/gerar-dias';
 import { gerarHorarios } from '../utils/gerar-horarios';
 
 const QUALQUER_BARBEIRO: Barbeiro = { id: 'qualquer', nome: 'Qualquer', iniciais: '★' };
@@ -47,6 +48,7 @@ export class Agendar {
   protected readonly servicos = SERVICOS;
   protected readonly barbeiros = [QUALQUER_BARBEIRO, ...BARBEIROS];
   protected readonly dias = computed(() => gerarDias(this.agora()));
+  protected readonly dataMinima = computed(() => dataLocal(this.agora()).data);
 
   protected readonly servicoSelecionado = linkedSignal<Servico>(() => {
     const id = this.servicoNaUrl();
@@ -55,14 +57,23 @@ export class Agendar {
 
   protected readonly barbeiroSelecionado = signal(QUALQUER_BARBEIRO);
 
-  protected readonly diaSelecionado = linkedSignal<DiaAgendamento[], DiaAgendamento | null>({
-    source: this.dias,
-    computation: (dias, anterior) =>
-      dias.find((dia) => dia.data === anterior?.value?.data) ??
-      dias.find((dia) => this.horariosDoDia(dia).some((horario) => !horario.ocupado)) ??
-      dias[0] ??
+  protected readonly diaSelecionado = linkedSignal<string, DiaAgendamento | null>({
+    source: this.dataMinima,
+    computation: (hoje, anterior) =>
+      (anterior?.value?.data && anterior.value.data >= hoje
+        ? criarDiaAgendamento(anterior.value.data, this.agora())
+        : null) ??
+      this.dias().find((dia) => this.horariosDoDia(dia).some((horario) => !horario.ocupado)) ??
+      this.dias()[0] ??
       null,
   });
+
+  protected selecionarData(data: string): void {
+    const dia = criarDiaAgendamento(data, this.agora());
+    if (dia) {
+      this.diaSelecionado.set(dia);
+    }
+  }
 
   protected readonly horarios = computed(() => {
     const dia = this.diaSelecionado();
@@ -87,7 +98,9 @@ export class Agendar {
     const servico = this.servicoSelecionado();
     const dia = this.diaSelecionado();
     const horario = this.horarioSelecionado();
-    const dataCompacta = dia ? ` · ${dia.semana} ${dia.numero}` : '';
+    const dataCompacta = dia
+      ? ` · ${dia.semana} ${dia.numero}/${dia.data.slice(5, 7)}/${dia.data.slice(0, 4)}`
+      : '';
     const horaCompacta = horario ? ` às ${horario}` : '';
 
     return {
