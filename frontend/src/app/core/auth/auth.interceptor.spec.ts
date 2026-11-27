@@ -57,4 +57,38 @@ describe('authInterceptor', () => {
     expect(auth.usuario()).toBeNull();
     expect(auth.autenticado()).toBe(false);
   });
+
+  it('avalia o pathname de URLs da API sem considerar query string', () => {
+    auth
+      .login({ username: 'fabiano@example.com', password: 'senha', rememberMe: false })
+      .subscribe();
+    http.expectOne('/api/auth/login').flush(USUARIO_RESPONSE);
+
+    cliente.get('/api/auth/me?atualizar=1').subscribe({ error: () => undefined });
+    http
+      .expectOne('/api/auth/me?atualizar=1')
+      .flush({ title: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
+    expect(auth.autenticado()).toBe(true);
+
+    cliente.post('/api/auth/login?origem=modal', 'username=x').subscribe({
+      error: () => undefined,
+    });
+    http
+      .expectOne('/api/auth/login?origem=modal')
+      .flush({ title: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
+    expect(auth.autenticado()).toBe(true);
+
+    cliente.get('https://third-party.example/api/resource').subscribe({ error: () => undefined });
+    http
+      .expectOne('https://third-party.example/api/resource')
+      .flush({ title: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
+    expect(auth.autenticado()).toBe(true);
+
+    cliente.get('/api/agendamentos?dia=hoje').subscribe({ error: () => undefined });
+    http
+      .expectOne('/api/agendamentos?dia=hoje')
+      .flush({ title: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
+
+    expect(auth.autenticado()).toBe(false);
+  });
 });
