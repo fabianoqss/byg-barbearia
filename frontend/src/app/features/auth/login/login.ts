@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../core/auth/auth.service';
 import { BARBEARIA } from '../../../shared/constants/barbearia';
 import { validarRetornoInterno } from '../utils/validar-retorno-interno';
@@ -18,6 +19,7 @@ type CampoLogin = 'login' | 'senha';
 })
 export class Login {
   private readonly formBuilder = inject(NonNullableFormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly rota = inject(ActivatedRoute);
@@ -55,7 +57,7 @@ export class Login {
     this.erroLogin.set(null);
     this.carregando.set(true);
     const login = this.form.controls.login.value.trim();
-    const username = login.includes('@') ? login : login.replace(/\D/g, '');
+    const username = login.includes('@') ? login.toLowerCase() : login.replace(/\D/g, '');
 
     this.authService
       .login({
@@ -63,7 +65,10 @@ export class Login {
         password: this.form.controls.senha.value,
         rememberMe: this.form.controls.manterConectado.value,
       })
-      .pipe(finalize(() => this.carregando.set(false)))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.carregando.set(false)),
+      )
       .subscribe({
         next: () => {
           const retorno = validarRetornoInterno(this.rota.snapshot.queryParamMap.get('returnUrl'));
