@@ -16,4 +16,8 @@ export class Inicio {
   protected readonly barbearia = BARBEARIA;
   protected readonly barbeiros = BARBEIROS;
   protected readonly servicos = SERVICOS;
+
+  protected rolarPara(fragmento: string): void {
+    document.getElementById(fragmento)?.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }
 }

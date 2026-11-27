@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { vi } from 'vitest';
 import { appConfig } from '../../app.config';
 
 describe('Inicio', () => {
@@ -32,6 +33,53 @@ describe('Inicio', () => {
       '/login',
       '/agendar',
     ]);
+  });
+
+  it('rola novamente para todas as seções quando o fragmento já está ativo', async () => {
+    for (const fragmento of ['topo', 'servicos', 'equipe', 'contato']) {
+      const secao = elemento.querySelector<HTMLElement>(`#${fragmento}`)!;
+      const rolar = vi.fn();
+      Object.defineProperty(secao, 'scrollIntoView', { configurable: true, value: rolar });
+      const link = elemento.querySelector<HTMLAnchorElement>(`a[href="/#${fragmento}"]`)!;
+
+      link.click();
+      await harness.fixture.whenStable();
+      link.click();
+      await harness.fixture.whenStable();
+
+      expect(rolar).toHaveBeenCalledTimes(2);
+      expect(rolar).toHaveBeenCalledWith({ behavior: 'auto', block: 'start' });
+    }
+  });
+
+  it('usa transição de visual ao navegar para login e agendamento', async () => {
+    const startViewTransition = vi.fn((atualizar: () => Promise<void>) => {
+      const concluida = Promise.resolve().then(atualizar);
+      return {
+        updateCallbackDone: concluida,
+        ready: concluida,
+        finished: concluida,
+      } as ViewTransition;
+    });
+    Object.defineProperty(document, 'startViewTransition', {
+      configurable: true,
+      value: startViewTransition,
+    });
+
+    elemento.querySelector<HTMLAnchorElement>('nav a[href="/login"]')!.click();
+    await harness.fixture.whenStable();
+
+    expect(startViewTransition).toHaveBeenCalledOnce();
+    expect(harness.routeNativeElement?.tagName.toLowerCase()).toBe('byg-login');
+
+    await harness.navigateByUrl('/');
+    elemento = harness.routeNativeElement!;
+    elemento.querySelector<HTMLAnchorElement>('nav a[href="/agendar"]')!.click();
+    await harness.fixture.whenStable();
+
+    expect(startViewTransition).toHaveBeenCalledTimes(3);
+    expect(harness.routeNativeElement?.tagName.toLowerCase()).toBe('byg-agendar');
+    Reflect.deleteProperty(document, 'startViewTransition');
   });
 
   it('permite transferir o foco para os destinos das âncoras', () => {
