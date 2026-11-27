@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
-import { CredenciaisLogin } from '../../features/auth/models/credenciais-login';
-import { UsuarioResponse } from '../../features/auth/models/usuario-response';
+import { CredenciaisLogin } from './models/credenciais-login';
+import { UsuarioResponse } from './models/usuario-response';
 import { Papel, Usuario } from '../../shared/models/usuario';
 
 const CABECALHOS_LOGIN = new HttpHeaders({

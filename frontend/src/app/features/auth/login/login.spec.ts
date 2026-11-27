@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { provideRouter } from '@angular/router';
-import { UsuarioResponse } from '../models/usuario-response';
+import { UsuarioResponse } from '../../../core/auth/models/usuario-response';
 import { Login } from './login';
 
 describe('Login', () => {
