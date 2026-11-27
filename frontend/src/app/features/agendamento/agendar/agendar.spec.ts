@@ -142,11 +142,20 @@ describe('Agendar', () => {
     );
   });
 
-  it('ignora uma data passada escolhida manualmente apesar do limite do controle', async () => {
+  it('restaura a última data válida após receber uma data passada ou vazia', async () => {
     await abrir();
     await escolherData('2027-01-04');
     await escolherData('2026-11-25');
 
+    expect(elemento.querySelector<HTMLInputElement>('#data-personalizada')?.value).toBe(
+      '2027-01-04',
+    );
+
+    await escolherData('');
+
+    expect(elemento.querySelector<HTMLInputElement>('#data-personalizada')?.value).toBe(
+      '2027-01-04',
+    );
     expect(elemento.querySelector('[aria-live="polite"]')?.textContent).toContain(
       'segunda-feira, 4 de janeiro de 2027',
     );

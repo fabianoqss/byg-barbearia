@@ -40,10 +40,18 @@ describe('gerarDias', () => {
   });
 
   it('rejeita datas anteriores ao dia atual de João Pessoa', () => {
-    expect(criarDiaAgendamento('2026-11-25', new Date('2026-11-26T11:00:00Z'))).toBeNull();
-    expect(criarDiaAgendamento('2026-11-28', new Date('2026-11-27T01:00:00Z'))?.data).toBe(
-      '2026-11-28',
-    );
+    const agora = new Date('2026-11-27T01:00:00Z');
+
+    expect(criarDiaAgendamento('2026-11-26', agora)?.data).toBe('2026-11-26');
+    expect(criarDiaAgendamento('2026-11-25', agora)).toBeNull();
+  });
+
+  it('rejeita datas inválidas ou malformadas', () => {
+    const agora = new Date('2026-11-26T11:00:00Z');
+
+    expect(criarDiaAgendamento('2026-02-30', agora)).toBeNull();
+    expect(criarDiaAgendamento('', agora)).toBeNull();
+    expect(criarDiaAgendamento('invalida', agora)).toBeNull();
   });
 
   it('mantém domingos selecionáveis sem expediente', () => {

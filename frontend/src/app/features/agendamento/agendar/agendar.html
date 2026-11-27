@@ -92,18 +92,6 @@
         >
           3 · Dia
         </h2>
-        <label for="data-personalizada" class="flex flex-col gap-2 text-sm text-muted">
-          <span>Escolha outra data</span>
-          <input
-            #dataInput
-            id="data-personalizada"
-            type="date"
-            [min]="dataMinima()"
-            [value]="diaSelecionado()?.data ?? ''"
-            (change)="selecionarData(dataInput.value)"
-            class="h-12 w-full max-w-72 rounded-field border border-border bg-surface px-3 text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300"
-          />
-        </label>
         <div class="grid grid-cols-6 gap-2 max-[359px]:gap-1">
           @for (dia of dias(); track dia.data) {
             <button
@@ -120,6 +108,18 @@
             </button>
           }
         </div>
+        <label for="data-personalizada" class="flex flex-col gap-2 text-sm text-muted">
+          <span>Escolha outra data</span>
+          <input
+            #dataInput
+            id="data-personalizada"
+            type="date"
+            [min]="dataMinima()"
+            [value]="diaSelecionado()?.data ?? ''"
+            (change)="selecionarData(dataInput.value, dataInput)"
+            class="h-12 w-full max-w-72 rounded-field border border-border bg-surface px-3 text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300"
+          />
+        </label>
       </section>
 
       <section id="horario" aria-labelledby="titulo-horario" class="flex flex-col gap-2.5">

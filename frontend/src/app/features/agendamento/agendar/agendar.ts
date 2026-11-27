@@ -68,11 +68,14 @@ export class Agendar {
       null,
   });
 
-  protected selecionarData(data: string): void {
+  protected selecionarData(data: string, campo: HTMLInputElement): void {
     const dia = criarDiaAgendamento(data, this.agora());
     if (dia) {
       this.diaSelecionado.set(dia);
+      return;
     }
+
+    campo.value = this.diaSelecionado()?.data ?? '';
   }
 
   protected readonly horarios = computed(() => {
