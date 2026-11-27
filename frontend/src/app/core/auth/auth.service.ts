@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
+import { catchError, finalize, map, Observable, of, throwError } from 'rxjs';
 import { CredenciaisLogin } from './models/credenciais-login';
 import { UsuarioResponse } from './models/usuario-response';
 import { Papel, Usuario } from '../../shared/models/usuario';
@@ -31,7 +31,7 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>('/api/auth/logout', null).pipe(tap(() => this.limparSessao()));
+    return this.http.post<void>('/api/auth/logout', null).pipe(finalize(() => this.limparSessao()));
   }
 
   carregarSessao(): Observable<Usuario | null> {

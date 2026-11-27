@@ -110,4 +110,17 @@ describe('AuthService', () => {
     expect(service.autenticado()).toBe(false);
     expect(service.papel()).toBeNull();
   });
+
+  it('limpa a sessão local mesmo quando logout falha', () => {
+    service
+      .login({ username: 'fabiano@example.com', password: 'senha', rememberMe: false })
+      .subscribe();
+    http.expectOne('/api/auth/login').flush(USUARIO_RESPONSE);
+    service.logout().subscribe({ error: () => undefined });
+
+    http.expectOne('/api/auth/logout').flush({}, { status: 500, statusText: 'Server Error' });
+
+    expect(service.usuario()).toBeNull();
+    expect(service.autenticado()).toBe(false);
+  });
 });
