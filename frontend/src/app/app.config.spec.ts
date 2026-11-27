@@ -147,5 +147,13 @@ describe('appConfig', () => {
     await harness.fixture.whenStable();
 
     expect(router.url).toBe('/login?returnUrl=%2Fprotegida');
+
+    cliente.get('/api/privado').subscribe({ error: () => undefined });
+    http
+      .expectOne('/api/privado')
+      .flush({ title: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
+    await harness.fixture.whenStable();
+
+    expect(router.url).toBe('/login?returnUrl=%2Fprotegida');
   });
 });
