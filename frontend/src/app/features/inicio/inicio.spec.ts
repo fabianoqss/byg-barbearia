@@ -47,39 +47,58 @@ describe('Inicio', () => {
       link.click();
       await harness.fixture.whenStable();
 
-      expect(rolar).toHaveBeenCalledTimes(2);
+      expect(rolar).toHaveBeenCalledOnce();
       expect(rolar).toHaveBeenCalledWith({ behavior: 'auto', block: 'start' });
     }
   });
 
   it('usa transição de visual ao navegar para login e agendamento', async () => {
+    const descritorOriginal = Object.getOwnPropertyDescriptor(document, 'startViewTransition');
+    const skipTransition = vi.fn();
     const startViewTransition = vi.fn((atualizar: () => Promise<void>) => {
       const concluida = Promise.resolve().then(atualizar);
       return {
         updateCallbackDone: concluida,
         ready: concluida,
         finished: concluida,
+        types: new Set() as ViewTransitionTypeSet,
+        skipTransition,
       } as ViewTransition;
     });
-    Object.defineProperty(document, 'startViewTransition', {
-      configurable: true,
-      value: startViewTransition,
-    });
+    try {
+      Object.defineProperty(document, 'startViewTransition', {
+        configurable: true,
+        value: startViewTransition,
+      });
 
-    elemento.querySelector<HTMLAnchorElement>('nav a[href="/login"]')!.click();
-    await harness.fixture.whenStable();
+      elemento.querySelector<HTMLAnchorElement>('nav a[href="/#servicos"]')!.click();
+      await harness.fixture.whenStable();
 
-    expect(startViewTransition).toHaveBeenCalledOnce();
-    expect(harness.routeNativeElement?.tagName.toLowerCase()).toBe('byg-login');
+      expect(startViewTransition).toHaveBeenCalledOnce();
+      expect(skipTransition).toHaveBeenCalledOnce();
 
-    await harness.navigateByUrl('/');
-    elemento = harness.routeNativeElement!;
-    elemento.querySelector<HTMLAnchorElement>('nav a[href="/agendar"]')!.click();
-    await harness.fixture.whenStable();
+      elemento.querySelector<HTMLAnchorElement>('nav a[href="/login"]')!.click();
+      await harness.fixture.whenStable();
 
-    expect(startViewTransition).toHaveBeenCalledTimes(3);
-    expect(harness.routeNativeElement?.tagName.toLowerCase()).toBe('byg-agendar');
-    Reflect.deleteProperty(document, 'startViewTransition');
+      expect(startViewTransition).toHaveBeenCalledTimes(2);
+      expect(skipTransition).toHaveBeenCalledOnce();
+      expect(harness.routeNativeElement?.tagName.toLowerCase()).toBe('byg-login');
+
+      await harness.navigateByUrl('/');
+      elemento = harness.routeNativeElement!;
+      elemento.querySelector<HTMLAnchorElement>('nav a[href="/agendar"]')!.click();
+      await harness.fixture.whenStable();
+
+      expect(startViewTransition).toHaveBeenCalledTimes(4);
+      expect(skipTransition).toHaveBeenCalledOnce();
+      expect(harness.routeNativeElement?.tagName.toLowerCase()).toBe('byg-agendar');
+    } finally {
+      if (descritorOriginal) {
+        Object.defineProperty(document, 'startViewTransition', descritorOriginal);
+      } else {
+        Reflect.deleteProperty(document, 'startViewTransition');
+      }
+    }
   });
 
   it('permite transferir o foco para os destinos das âncoras', () => {
