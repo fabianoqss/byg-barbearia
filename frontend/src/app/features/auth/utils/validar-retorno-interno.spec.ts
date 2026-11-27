@@ -14,9 +14,23 @@ describe('validarRetornoInterno', () => {
     '//externo.example/path',
     'https://externo.example/path',
     'javascript:alert(1)',
-    '/\u005c\u005cexterno.example',
+    '/\\externo.example',
     '/barbeiro\\agenda',
+    '/%2F%2Fevil',
+    '/%5Cevil',
+    '/\t/evil',
+    '/\r\n/evil',
+    '/ /evil',
+    '/login',
+    '/login?returnUrl=%2Fagendar',
+    '/login#topo',
+    '%E0%A4%A',
+    '/%E0%A4%A',
   ])('usa a página inicial para destino inválido %s', (destino) => {
     expect(validarRetornoInterno(destino)).toBe('/');
+  });
+
+  it('rejeita origem externa após interpretar a URL', () => {
+    expect(validarRetornoInterno('//externo.example/path')).toBe('/');
   });
 });
