@@ -1,82 +1,114 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { provideRouter } from '@angular/router';
+import { UsuarioResponse } from '../models/usuario-response';
 import { Login } from './login';
 
 describe('Login', () => {
-  let fixture: ComponentFixture<Login>;
+  let harness: RouterTestingHarness;
+  let http: HttpTestingController;
   let elemento: HTMLElement;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [Login],
-      providers: [provideRouter([])],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(Login);
-    elemento = fixture.nativeElement;
-    await fixture.whenStable();
+      providers: [
+        provideRouter([
+          { path: '', component: Login },
+          { path: 'login', component: Login },
+          { path: 'agendar', component: Login },
+        ]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    });
+    harness = await RouterTestingHarness.create('/login');
+    http = TestBed.inject(HttpTestingController);
+    elemento = harness.routeNativeElement!;
   });
 
-  function campo(id: string): HTMLInputElement {
-    return elemento.querySelector<HTMLInputElement>(`#${id}`)!;
+  afterEach(() => http.verify());
+
+  function preencher(login: string, senha: string): void {
+    const campoLogin = elemento.querySelector<HTMLInputElement>('#login')!;
+    const campoSenha = elemento.querySelector<HTMLInputElement>('#senha')!;
+    campoLogin.value = login;
+    campoLogin.dispatchEvent(new Event('input'));
+    campoSenha.value = senha;
+    campoSenha.dispatchEvent(new Event('input'));
+    harness.fixture.detectChanges();
   }
 
-  function botao(seletor: string): HTMLButtonElement {
-    return elemento.querySelector<HTMLButtonElement>(seletor)!;
-  }
+  it('envia credenciais e redireciona para returnUrl interno após login', async () => {
+    await harness.navigateByUrl('/login?returnUrl=%2Fagendar');
+    elemento = harness.routeNativeElement!;
+    preencher('(83) 9 0000-0000', 'senha-segura');
+    elemento.querySelector<HTMLInputElement>('input[type="checkbox"]')!.click();
+    elemento.querySelector<HTMLButtonElement>('button[type="submit"]')!.click();
 
-  async function preencher(id: string, valor: string): Promise<void> {
-    const input = campo(id);
-    input.value = valor;
-    input.dispatchEvent(new Event('input'));
-    input.dispatchEvent(new Event('blur'));
-    await fixture.whenStable();
-  }
-
-  async function enviar(): Promise<void> {
-    botao('button[type="submit"]').click();
-    await fixture.whenStable();
-  }
-
-  it('alterna a visibilidade da senha', async () => {
-    const alternar = botao('button[aria-pressed]');
-    expect(campo('senha').type).toBe('password');
-    expect(alternar.getAttribute('aria-label')).toBe('Mostrar senha');
-
-    alternar.click();
-    await fixture.whenStable();
-
-    expect(campo('senha').type).toBe('text');
-    expect(alternar.getAttribute('aria-label')).toBe('Ocultar senha');
-    expect(alternar.getAttribute('aria-pressed')).toBe('true');
-  });
-
-  it('mostra os campos obrigatórios ao enviar vazio', async () => {
-    await enviar();
-
-    expect(elemento.querySelector('#login-erro')?.textContent).toContain(
-      'Informe seu e-mail ou telefone.',
+    const requisicao = http.expectOne('/api/auth/login');
+    expect(requisicao.request.body).toBe(
+      'username=83900000000&password=senha-segura&remember-me=true',
     );
-    expect(elemento.querySelector('#senha-erro')?.textContent).toContain('Informe sua senha.');
-    expect(campo('login').getAttribute('aria-invalid')).toBe('true');
-    expect(campo('login').getAttribute('aria-describedby')).toBe('login-erro');
+    requisicao.flush({
+      id: 1,
+      nome: 'Fabiano',
+      email: 'fabiano@example.com',
+      papel: 'CLIENTE',
+    } satisfies UsuarioResponse);
+    await harness.fixture.whenStable();
+
+    expect(TestBed.inject(Router).url).toBe('/agendar');
   });
 
-  it('rejeita login que não é e-mail nem telefone', async () => {
-    await preencher('login', 'cliente');
+  it('mostra erro genérico para credenciais recusadas', async () => {
+    preencher('fabiano@example.com', 'senha-invalida');
+    elemento.querySelector<HTMLButtonElement>('button[type="submit"]')!.click();
+    http
+      .expectOne('/api/auth/login')
+      .flush({ detail: 'Credenciais inválidas' }, { status: 401, statusText: 'Unauthorized' });
+    await harness.fixture.whenStable();
+    harness.fixture.detectChanges();
 
-    expect(elemento.querySelector('#login-erro')?.textContent).toContain(
-      'Informe um e-mail ou telefone válido.',
-    );
+    expect(elemento.textContent).toContain('E-mail/telefone ou senha inválidos');
   });
 
-  it('não mostra erros quando o formulário é válido', async () => {
-    await preencher('login', '(83) 9 0000-0000');
-    await preencher('senha', 'segredo123');
-    await enviar();
+  it('redireciona para a página inicial quando returnUrl não é interno', async () => {
+    await harness.navigateByUrl('/login?returnUrl=%2F%2Fexterno.example');
+    elemento = harness.routeNativeElement!;
+    preencher('fabiano@example.com', 'senha-segura');
+    elemento.querySelector<HTMLButtonElement>('button[type="submit"]')!.click();
+    http.expectOne('/api/auth/login').flush({
+      id: 1,
+      nome: 'Fabiano',
+      email: 'fabiano@example.com',
+      papel: 'CLIENTE',
+    } satisfies UsuarioResponse);
+    await harness.fixture.whenStable();
 
-    expect(elemento.querySelector('#login-erro')).toBeNull();
-    expect(elemento.querySelector('#senha-erro')).toBeNull();
-    expect(campo('login').getAttribute('aria-invalid')).toBe('false');
+    expect(TestBed.inject(Router).url).toBe('/');
+  });
+
+  it('desabilita o botão durante o envio', () => {
+    preencher('fabiano@example.com', 'senha-segura');
+    elemento.querySelector<HTMLButtonElement>('button[type="submit"]')!.click();
+    harness.fixture.detectChanges();
+
+    expect(elemento.querySelector<HTMLButtonElement>('button[type="submit"]')!.disabled).toBe(true);
+    http.expectOne('/api/auth/login').flush({
+      id: 1,
+      nome: 'Fabiano',
+      email: 'fabiano@example.com',
+      papel: 'CLIENTE',
+    } satisfies UsuarioResponse);
+  });
+
+  it('aponta o login Google para o endpoint de autorização', () => {
+    expect(
+      elemento.querySelector<HTMLAnchorElement>('a[href="/oauth2/authorization/google"]'),
+    ).not.toBeNull();
   });
 });
