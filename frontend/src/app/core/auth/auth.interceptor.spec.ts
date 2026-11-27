@@ -1,6 +1,7 @@
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AuthService } from './auth.service';
 import { authInterceptor } from './auth.interceptor';
 
@@ -21,6 +22,7 @@ describe('authInterceptor', () => {
       providers: [
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
+        provideRouter([]),
         AuthService,
       ],
     });
